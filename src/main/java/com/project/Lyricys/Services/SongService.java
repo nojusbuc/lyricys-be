@@ -39,9 +39,13 @@ public class SongService {
         SongVersion firstVersion = new SongVersion();
         firstVersion.setSong(savedSong);
         firstVersion.setContent("");
+        firstVersion.setVersionName("Created song.");
         SongVersion savedVersion = songVersionRepository.save(firstVersion);
 
-        savedSong.setCurrentVersionId(savedVersion.getId());
+        savedSong.setCurrentVersion(savedVersion);
+
+        savedSong.getVersions().add(savedVersion);
+
         return songRepository.save(savedSong);
     }
 

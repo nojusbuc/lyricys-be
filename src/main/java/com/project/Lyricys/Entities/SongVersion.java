@@ -1,6 +1,8 @@
 package com.project.Lyricys.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,12 +24,14 @@ public class SongVersion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id", nullable = false)
+    @JsonBackReference
     private Song song;
 
     @NotBlank(message = "Version name is required.")
     private String versionName;
 
-    @Lob
+
+    @Basic(fetch = FetchType.EAGER)
     private String content;
 
     private String versionNotes;

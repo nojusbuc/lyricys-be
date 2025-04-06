@@ -11,4 +11,9 @@ spring:
 
 server:
   port: 5000
+springdoc:
+  swagger-ui:
+    path:
+      /swagger-ui/index.html
+
 
