@@ -36,6 +36,12 @@ public class SongVersion {
 
     private String versionNotes;
 
+    @Column(nullable = false)
+    private boolean starred = false;
+
+    @Column(nullable = false)
+    private boolean archived = false;
+
     @NotNull(message = "Created date is mandatory")
     @Column(name = "created_date", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
