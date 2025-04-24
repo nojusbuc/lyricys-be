@@ -1,9 +1,2 @@
-package com.project.Lyricys.DTOs;
-
-import lombok.Data;
-
-@Data
-public class SongVersionDto {
-    private String name;
-    private String content;
+package com.project.Lyricys.DTOs;public class SongVersionDto {
 }
