@@ -1,17 +1,14 @@
 package com.project.Lyricys.Services;
 
-import com.project.Lyricys.DTOs.SongVersionDto;
+import com.project.Lyricys.DTOs.SongVersionCreateDto;
 import com.project.Lyricys.DTOs.SongVersionUpdateDto;
 import com.project.Lyricys.Entities.Song;
 import com.project.Lyricys.Entities.SongVersion;
 import com.project.Lyricys.Repositories.SongRepository;
 import com.project.Lyricys.Repositories.SongVersionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Response;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 @Service
 public class SongVersionService {
@@ -27,15 +24,15 @@ public class SongVersionService {
 
 
     @Transactional
-    public SongVersion createSongVersion(Long songId, SongVersionDto songVersionDto) {
+    public SongVersion createSongVersion(Long songId, SongVersionCreateDto songVersionCreateDto) {
 
         Song song = songRepository.findById(songId)
                 .orElseThrow(() -> new EntityNotFoundException("Song not found with id: " + songId));
 
         SongVersion newSongVersion = new SongVersion();
         newSongVersion.setSong(song);
-        newSongVersion.setContent(songVersionDto.getContent());
-        newSongVersion.setVersionName(songVersionDto.getName());
+        newSongVersion.setContent(songVersionCreateDto.getContent());
+        newSongVersion.setVersionName(songVersionCreateDto.getName());
 
         SongVersion savedSongVersion = songVersionRepository.save(newSongVersion);
 

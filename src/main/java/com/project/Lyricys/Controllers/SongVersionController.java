@@ -1,10 +1,9 @@
 package com.project.Lyricys.Controllers;
 
-import com.project.Lyricys.DTOs.SongVersionDto;
+import com.project.Lyricys.DTOs.SongVersionCreateDto;
 import com.project.Lyricys.DTOs.SongVersionUpdateDto;
 import com.project.Lyricys.Entities.SongVersion;
 import com.project.Lyricys.Services.SongVersionService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +18,8 @@ public class SongVersionController {
 
 
     @PostMapping("{songId}/versions/")
-    public ResponseEntity<SongVersion> createSongVersion(@PathVariable Long songId, @RequestBody SongVersionDto songVersionDto) {
-        SongVersion songVersion = songVersionService.createSongVersion(songId, songVersionDto);
+    public ResponseEntity<SongVersion> createSongVersion(@PathVariable Long songId, @RequestBody SongVersionCreateDto songVersionCreateDto) {
+        SongVersion songVersion = songVersionService.createSongVersion(songId, songVersionCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(songVersion);
     }
 

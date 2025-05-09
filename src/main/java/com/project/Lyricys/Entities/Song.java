@@ -53,6 +53,10 @@ public class Song {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<SongVersion> versions = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User owner;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();

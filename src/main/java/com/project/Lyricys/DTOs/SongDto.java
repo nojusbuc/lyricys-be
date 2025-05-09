@@ -1,2 +1,4 @@
-package com.project.Lyricys.DTOs;public class SongDto {
+package com.project.Lyricys.DTOs;
+
+public class SongDto {
 }

@@ -1,2 +1,4 @@
-package com.project.Lyricys.utils;public class AuthenticationManager {
+package com.project.Lyricys.utils;
+
+public class AuthenticationManager {
 }

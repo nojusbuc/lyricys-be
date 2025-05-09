@@ -2,7 +2,7 @@ package com.project.Lyricys.DTOs;
 
 import jakarta.validation.constraints.*;
 
-public record LoginDto (
+public record LoginRequestDto(
 
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email is required")
