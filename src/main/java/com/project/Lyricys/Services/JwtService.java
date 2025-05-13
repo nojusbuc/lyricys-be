@@ -44,6 +44,13 @@ public class JwtService {
             return false;
         }
     }
+    public Long getUserId(String token) {
+        return Long.parseLong(Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject());
+    }
 
     public String extractSubject(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()

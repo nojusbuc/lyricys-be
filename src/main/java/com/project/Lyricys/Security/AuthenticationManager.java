@@ -1,4 +1,4 @@
-package com.project.Lyricys.utils;
+package com.project.Lyricys.Security;
 
 public class AuthenticationManager {
 }
