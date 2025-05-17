@@ -1,6 +1,7 @@
 package com.project.Lyricys.Controllers;
 
 import com.project.Lyricys.DTOs.SongCreationDto;
+import com.project.Lyricys.DTOs.SongDetailsDto;
 import com.project.Lyricys.Entities.Song;
 import com.project.Lyricys.Entities.SongVersion;
 import com.project.Lyricys.Repositories.SongRepository;
@@ -27,16 +28,16 @@ public class SongController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Song>> getAllSongs() {
+    public ResponseEntity<List<SongDetailsDto>> getAllSongs() {
         return ResponseEntity.ok(songService.getAllSongs());
     }
 
     @PostMapping
-    public ResponseEntity<Song> createSong(@RequestBody SongCreationDto songDto, @AuthenticationPrincipal CustomUserDetails principal) {
+    public ResponseEntity<SongDetailsDto> createSong(@RequestBody SongCreationDto songDto, @AuthenticationPrincipal CustomUserDetails principal) {
 
 
 
-        Song savedSong = songService.CreateSong(songDto.getTitle());
+        SongDetailsDto savedSong = songService.CreateSong(songDto.getTitle(), principal);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSong);
     }
 

@@ -57,7 +57,7 @@ public class RegistrationService {
         User saved = userRepository.save(user);
 
         String token = jwtService.generateToken(saved.getEmail());
-        return new LoginResponseDto(token);
+        return new LoginResponseDto(token, user.getId());
     }
 
     @Transactional
@@ -73,7 +73,7 @@ public class RegistrationService {
         }
 
         String token = jwtService.generateToken(user.getEmail());
-        return new LoginResponseDto(token);
+        return new LoginResponseDto(token, user.getId());
 
 
 

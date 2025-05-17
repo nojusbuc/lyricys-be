@@ -1,6 +1,6 @@
 package com.project.Lyricys.DTOs;
 
-public record SongVersionUpdateDto(
+public record SongVersionDetailsDto(
         Long id,
         String content,
         String versionNotes,

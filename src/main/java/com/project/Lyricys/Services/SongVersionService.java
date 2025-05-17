@@ -1,14 +1,18 @@
 package com.project.Lyricys.Services;
 
 import com.project.Lyricys.DTOs.SongVersionCreateDto;
-import com.project.Lyricys.DTOs.SongVersionUpdateDto;
+import com.project.Lyricys.DTOs.SongVersionRequestDto;
+import com.project.Lyricys.DTOs.SongVersionResponseDto;
 import com.project.Lyricys.Entities.Song;
 import com.project.Lyricys.Entities.SongVersion;
 import com.project.Lyricys.Repositories.SongRepository;
 import com.project.Lyricys.Repositories.SongVersionRepository;
+import com.project.Lyricys.Security.CustomUserDetails;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class SongVersionService {
@@ -24,7 +28,7 @@ public class SongVersionService {
 
 
     @Transactional
-    public SongVersion createSongVersion(Long songId, SongVersionCreateDto songVersionCreateDto) {
+    public SongVersionResponseDto createSongVersion(Long songId, SongVersionCreateDto songVersionCreateDto) {
 
         Song song = songRepository.findById(songId)
                 .orElseThrow(() -> new EntityNotFoundException("Song not found with id: " + songId));
@@ -36,24 +40,45 @@ public class SongVersionService {
 
         SongVersion savedSongVersion = songVersionRepository.save(newSongVersion);
 
+        SongVersionResponseDto songVersionResponseDto = SongVersionResponseDto.fromEntity(savedSongVersion);
+
         song.setCurrentVersion(savedSongVersion);
         song.getVersions().add(savedSongVersion);
         songRepository.save(song);
 
-        return savedSongVersion;
+        return songVersionResponseDto;
     }
 
     @Transactional
-    public SongVersion updateSongVersion(Long songId, long songVersionid, SongVersionUpdateDto songVersionUpdateDto) {
-        SongVersion songVersion = songVersionRepository.findById(songVersionid)
-                .orElseThrow(() -> new EntityNotFoundException("Song version not found with ID: " + songVersionid));
-        if (songVersionUpdateDto.getVersionName() != null) songVersion.setVersionName(songVersionUpdateDto.getVersionName());
-        if (songVersionUpdateDto.getIsArchived() != null) songVersion.setArchived(songVersionUpdateDto.getIsArchived());
-        if (songVersionUpdateDto.getVersionNotes() != null) songVersion.setVersionNotes(songVersionUpdateDto.getVersionNotes());
-        if (songVersionUpdateDto.getContent() != null) songVersion.setContent(songVersionUpdateDto.getContent());
-        if (songVersionUpdateDto.getIsStarred() != null) songVersion.setStarred(songVersionUpdateDto.getIsStarred());
+    public SongVersionResponseDto updateSongVersion(Long songId, SongVersionRequestDto songVersionRequestDto, CustomUserDetails principal) {
 
-        return songVersionRepository.save(songVersion);
+        SongVersion songVersion = songVersionRepository.findByIdAndSongId(songVersionRequestDto.id(), songId)
+                .orElseThrow(() -> new EntityNotFoundException("Song version not found with id: " + songVersionRequestDto.id()));
+
+        Song song = songRepository.findById(songId).orElseThrow(() -> new EntityNotFoundException("Song not found with id: " + songId));
+
+        if (!song.getOwner().getId().equals(principal.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "This song does not exist or belongs to a different user."
+
+            );
+        }
+
+        if (songVersionRequestDto.versionName() != null) songVersion.setVersionName(songVersionRequestDto.versionName());
+        if (songVersionRequestDto.versionNotes() != null) songVersion.setVersionNotes(songVersionRequestDto.versionNotes());
+        if (songVersionRequestDto.content() != null) songVersion.setContent(songVersionRequestDto.content());
+        songVersion.setStarred(songVersionRequestDto.starred());
+        songVersion.setArchived(songVersionRequestDto.archived());
+
+
+
+        songVersionRepository.save(songVersion);
+
+        return SongVersionResponseDto.fromEntity(songVersion);
+
+
+
     }
 
 

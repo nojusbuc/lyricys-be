@@ -1,10 +1,15 @@
 package com.project.Lyricys.Services;
 
+import com.project.Lyricys.DTOs.SongDetailsDto;
 import com.project.Lyricys.Entities.Song;
 import com.project.Lyricys.Entities.SongVersion;
+import com.project.Lyricys.Entities.User;
 import com.project.Lyricys.Repositories.SongRepository;
 import com.project.Lyricys.Repositories.SongVersionRepository;
+import com.project.Lyricys.Repositories.UserRepository;
+import com.project.Lyricys.Security.CustomUserDetails;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +19,19 @@ import java.util.List;
 public class SongService {
     private final SongRepository songRepository;
     private final SongVersionRepository songVersionRepository;
+    private final UserRepository userRepository;
 
-    public SongService(SongRepository songRepository, SongVersionRepository songVersionRepository) {
+    public SongService(SongRepository songRepository, SongVersionRepository songVersionRepository, UserRepository userRepository) {
         this.songRepository = songRepository;
         this.songVersionRepository = songVersionRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<Song> getAllSongs() {
-        return songRepository.findAll();
+    public List<SongDetailsDto> getAllSongs() {
+        List<Song> songs = songRepository.findAll();
+
+
+        return songs.stream().map(SongDetailsDto::fromEntity).toList();
     }
 
     public Song getSongById(Long id) {
@@ -30,9 +40,15 @@ public class SongService {
     }
 
     @Transactional
-    public Song CreateSong(String title) {
+    public SongDetailsDto CreateSong(String title, CustomUserDetails principal) {
+
+        User user = userRepository.findById(principal.getId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + principal.getId()));
+
+
         Song song = new Song();
         song.setTitle(title);
+        song.setOwner(user);
 
         Song savedSong = songRepository.save(song);
 
@@ -46,7 +62,9 @@ public class SongService {
 
         savedSong.getVersions().add(savedVersion);
 
-        return songRepository.save(savedSong);
+        Song finalSong = songRepository.save(savedSong);
+
+        return SongDetailsDto.fromEntity(finalSong);
     }
 
 }
